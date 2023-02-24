@@ -1,0 +1,6 @@
+<resources>
+    <string name="app_name">CamQR</string>
+    <string name="status_default">Point camera to a QR code\nto start scanning…</string>
+    <string name="status_scanned">QR Code scanned!</string>
+    <string name="status_error">Camera error!</string>
+</resources>
