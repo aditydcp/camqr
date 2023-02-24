@@ -1,20 +1,20 @@
 package com.example.camqr
 
 import android.content.pm.PackageManager
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
+import android.view.Gravity
+import android.view.View
+import android.widget.LinearLayout
+import android.widget.PopupWindow
 import android.widget.TextView
 import android.widget.Toast
+import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
-import com.budiyev.android.codescanner.AutoFocusMode
-import com.budiyev.android.codescanner.CodeScanner
-import com.budiyev.android.codescanner.CodeScannerView
-import com.budiyev.android.codescanner.DecodeCallback
-import com.budiyev.android.codescanner.ErrorCallback
-import com.budiyev.android.codescanner.ScanMode
+import com.budiyev.android.codescanner.*
 import com.example.camqr.databinding.ActivityMainBinding
+
 
 class MainActivity : AppCompatActivity() {
     private lateinit var codeScanner: CodeScanner
@@ -51,6 +51,7 @@ class MainActivity : AppCompatActivity() {
                 runOnUiThread {
                     textStatus.text = getString(R.string.status_scanned)
                 }
+                showPopup(binding.root)
             }
 
             errorCallback = ErrorCallback {
@@ -102,6 +103,33 @@ class MainActivity : AppCompatActivity() {
                     // permission granted
                 }
             }
+        }
+    }
+
+    private fun showPopup(view: View, textResult: String? = null) {
+        // inflate the layout of the popup
+        val popupView = layoutInflater.inflate(R.layout.popup_result, null)
+
+        // create the popup
+        val width = LinearLayout.LayoutParams.WRAP_CONTENT
+        val height = LinearLayout.LayoutParams.WRAP_CONTENT
+        val focusable = true // lets taps outside of popup to dismiss it
+        if (textResult != null) {
+            popupView.findViewById<TextView>(R.id.text_result).text = textResult
+        } else {
+            popupView.findViewById<TextView>(R.id.text_result).text =
+                getString(R.string.popuptext_default)
+        }
+        val popupWindow = PopupWindow(popupView, width, height, focusable)
+
+        // show the popup
+        // passed view does not matter since it is only used for window token
+        popupWindow.showAtLocation(view, Gravity.CENTER, 0, 0)
+
+        // dismiss the popup window when clicked
+        popupView.setOnClickListener {
+            popupWindow.dismiss()
+            codeScanner.startPreview()
         }
     }
 
